@@ -2,15 +2,15 @@
 Este projeto tem como objetivo colocar em prática conceitos iniciais de orquestração no Airflow a partir de uma base de dados Sqlite
 
 ## Detalhamento do Desafio
-1- Criar uma task que lê os dados da tabela 'Order' do banco de dados disponível em data/Northwhind_small.sqlite. Essa task deve escrever um arquivo chamado "output_orders.csv".
+1- Criar uma task que lê os dados da tabela ***'Order'*** do banco de dados disponível em ***data/Northwhind_small.sqlite***. Essa task deve escrever um arquivo chamado ***"output_orders.csv"***.
 
-2- Criar uma task que lê os dados da tabela "OrderDetail" do mesmo banco de dados e faz um JOIN com o arquivo "output_orders.csv" que você exportou na tarefa anterior. Essa task deve calcular qual a soma da quantidade vendida (Quantity) com destino (ShipCity) para o Rio de Janeiro. Você deve exportar essa contagem em arquivo "count.txt" que contenha somente esse valor em formato texto (use a função str() para converter número em texto). 
+2- Criar uma task que lê os dados da tabela ***"OrderDetail"*** do mesmo banco de dados e faz um JOIN com o arquivo ***"output_orders.csv"*** que você exportou na tarefa anterior. Essa task deve calcular qual a soma da quantidade vendida ***(Quantity)*** com destino ***(ShipCity)*** para o ***Rio de Janeiro***. Você deve exportar essa contagem em arquivo ***"count.txt"*** que contenha somente esse valor em formato texto (use a função ***str()*** para converter número em texto). 
 
-3- Adicionar uma variável no Airflow com a key "my_email" e no campo "value" adicione seu email.
+3- Adicionar uma variável no Airflow com a key ***"my_email"*** e no campo ***"value"*** adicione seu email.
 
-4- Criar uma ordenação de execução das tasks que deve terminar com a task export_final_output.
+4- Criar uma ordenação de execução das tasks que deve terminar com a task ***export_final_output***.
 
-5- Rodar o DAG sem erros e gerar o arquivo final_output.txt com apenas um texto codificado gerado automaticamente pela task export_final_output.
+5- Rodar o DAG sem erros e gerar o arquivo ***final_output.txt*** com apenas um texto codificado gerado automaticamente pela task ***export_final_output***.
 
 ## Instruções
 
@@ -23,7 +23,7 @@ cd desafioairflow
 ```
 
 ### 2. Criando o ambiente de trabalho
-Para instalar o Airflow, primeiro crie um virtualenv e depois rode o script install.sh. Esse script é um ctrl c ctrl v das instruções encontradas no site.
+Para instalar o Airflow, caso ainda não tenha, primeiro crie um virtualenv e depois rode o script install.sh. Esse script é uma cópia das instruções encontradas no site. Caso tenha o Airflow instalado, o arquivo requirements.txt precisa ser executado no ambiente onde o Airflow está instalado.
 
 ```sh
 virtualenv venv -p python3
@@ -43,7 +43,7 @@ standalone |
 O Airflow roda na porta 8080, então podemos acessar em http://localhost:8080
 
 ### 3. Limpando os dags de exemplo
-Para tirar os dags de exemplo e começar um dag nosso, podemos apagar os arquivos airflow-data/data e airflow-data/admin-password.txt, e editar o arquivo airflow.cfg trocando:
+Para tirar os dags de exemplo e começar um dag nosso, podemos editar o arquivo ***airflow.cfg*** localizado no diretório **~/airflow** trocando:
 
 ```sh
 load_examples = True
@@ -52,11 +52,26 @@ para
 ```sh
 load_examples = False
 ```
-Feito isso, configure o ambiente para dizer onde vão ficar os arquivos de config do airflow, fazemos isso configurando a seguinte variável de ambiente:
+Feito isso, termine a execução do Airflow pressionando ***CTRL + C*** no terminal.  
 
-```sh
-export AIRFLOW_HOME=./airflow-data
+O Airflow procura por DAGs na em arquivos ```.py``` no diretório ***~/airflow/dags***. Então criaremos uma pasta chamada ***dags*** e copiaremos o arquivo ```northwind.py``` dentro de ***~/airflow/dags***. 
+
+Copie também a pasta ***data*** 
+
+A estrutura do diretório deve ficar assim:
+
 ```
+├── airflow
+│   ├── airflow.cfg
+│   ├── airflow.db
+│   ├── airflow-webserver.pid
+│   ├── dags
+│   ├── logs
+│   ├── data
+│   ├── standalone_admin_password.txt
+│   └── webserver_config.py
+```
+
 Na sequência, rode o comando para resetar o db do airflow e fazer start do airflow local:
 
 ```sh
@@ -64,12 +79,7 @@ airflow db reset
 airflow standalone
 ```
 
-O Airflow procura por DAGs na em arquivos .py no diretório:
-
-```sh
-AIRFLOW_HOME/dags
-```
-Em nosso caso AIRFLOW_HOME é airflow-data, então criaremos uma pasta dags e copiaremos o arquivo northwind.py dentro de airflow-data. Dê um refresh no airflow e veja se o dag apareceu.
+Dê um refresh no airflow e veja se o dag apareceu.
 
 
 ## Explicando a solução para o desafio 
