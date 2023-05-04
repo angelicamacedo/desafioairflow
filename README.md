@@ -1,5 +1,5 @@
 ## Orquestração com Airflow
-Este projeto tem como objetivo colocar em prática conceitos iniciais de orquestração no Airflow a partir de uma base de dados Sqlite
+Este projeto tem como objetivo colocar em prática conceitos iniciais de orquestração no Airflow a partir de uma base de dados Sqlite.
 
 ## Detalhamento do Desafio
 1- Criar uma task que lê os dados da tabela ***'Order'*** do banco de dados disponível em ***data/Northwhind_small.sqlite***. Essa task deve escrever um arquivo chamado ***"output_orders.csv"***.
@@ -14,6 +14,8 @@ Este projeto tem como objetivo colocar em prática conceitos iniciais de orquest
 
 ## Instruções
 
+Nota: Os comandos utilizados são para ambiente Linux.
+
 ### 1. Clonando o repositório
 O primeiro passo é clonar o repositório para um novo repositório no seu computador:
 
@@ -23,7 +25,7 @@ cd desafioairflow
 ```
 
 ### 2. Criando o ambiente de trabalho
-Para instalar o Airflow, caso ainda não tenha, primeiro crie um virtualenv e depois rode o script install.sh. Esse script é uma cópia das instruções encontradas no site. Caso tenha o Airflow instalado, o arquivo requirements.txt precisa ser executado no ambiente onde o Airflow está instalado.
+Para instalar o Airflow, caso ainda não tenha, primeiro crie um virtualenv e depois rode o script install.sh. Esse script é uma cópia das instruções encontradas no site. Caso tenha o Airflow instalado, o arquivo ***requirements.txt*** precisa ser executado no ambiente onde o Airflow está instalado.
 
 ```sh
 virtualenv venv -p python3
@@ -31,7 +33,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 bash install.sh
 ```
-Se as coisas deram certo, no terminal vai aparecer a seguinte mensagem:
+Se as coisas derem certo, no terminal irá aparecer a seguinte mensagem:
 
 ```sh
 standalone | 
@@ -43,7 +45,7 @@ standalone |
 O Airflow roda na porta 8080, então podemos acessar em http://localhost:8080
 
 ### 3. Limpando os dags de exemplo
-Para tirar os dags de exemplo e começar um dag nosso, podemos editar o arquivo ***airflow.cfg*** localizado no diretório **~/airflow** trocando:
+Para tirar os dags de exemplo e começar um DAG nosso, podemos editar o arquivo ***airflow.cfg*** localizado no diretório **~/airflow** trocando:
 
 ```sh
 load_examples = True
@@ -54,9 +56,9 @@ load_examples = False
 ```
 Feito isso, termine a execução do Airflow pressionando ***CTRL + C*** no terminal.  
 
-O Airflow procura por DAGs na em arquivos ```.py``` no diretório ***~/airflow/dags***. Então criaremos uma pasta chamada ***dags*** e copiaremos o arquivo ```northwind.py``` dentro de ***~/airflow/dags***. 
+O Airflow procura por DAGs em arquivos ```.py``` no diretório ***~/airflow/dags***. Então, criaremos uma pasta chamada ***dags***, copiaremos o arquivo ```northwind.py``` e o colocaremos dentro de ***~/airflow/dags***. 
 
-Copie também a pasta ***data*** 
+Copie também a pasta ***data*** para ***~/airflow***
 
 A estrutura do diretório deve ficar assim:
 
@@ -72,14 +74,17 @@ A estrutura do diretório deve ficar assim:
 │   └── webserver_config.py
 ```
 
-Na sequência, rode o comando para resetar o db do airflow e fazer start do airflow local:
+Na sequência, rode o comando para resetar o db do Airflow e fazer start do Airflow local:
 
 ```sh
 airflow db reset
 airflow standalone
 ```
 
-Dê um refresh no airflow e veja se o dag apareceu.
+Dê um refresh no Airflow e veja se o DAG apareceu. Após a execução, se tudo deu certo, você terá três novos arquivos no diretório ***~/airflow/data***, sendo eles:***output_orders.csv***, ***count.txt*** e ***final_output.txt***. Além disso, no menu ***Admin -> Variables***deverá aparecer uma variável com a key "my_email" e um e-mail no campo "val". Para mais informações, veja a pasta ***imagens***.
+
+
+No tópico a seguir, há o detalhamento de criação do DAG.
 
 
 ## Explicando a solução para o desafio 
@@ -104,7 +109,7 @@ output_orders = os.path.join(path, '../data/output_orders.csv')
 count_result = os.path.join(path, '../data/count.txt')
 final_output = os.path.join(path, '../data/final_output.txt')
 ```
-3 - Criando a função que lê os dados da tabela Order e cria um arquivo chamado output_orders.csv
+3 - Criando a função que lê os dados da tabela ***Order*** e cria um arquivo chamado ***output_orders.csv***
 
 ```py
 def extract_orders():
@@ -118,7 +123,7 @@ def extract_orders():
     df.to_csv(output_orders, index=False)
 ```
 
-4 - Criando função que lê os dados da tabela OrderDetail e faz um join com o arquivo output_orders.csv. Então calcula a soma da quantidade vendida (Quantity) com destino (ShipCity) para o Rio de Janeiro e exporta essa contagem em um arquivo count.txt
+4 - Criando função que lê os dados da tabela ***OrderDetail*** e faz um join com o arquivo ***output_orders.csv***. Então calcula a soma da quantidade vendida ***(Quantity)*** com destino ***(ShipCity)*** para o ***Rio de Janeiro*** e exporta essa contagem em um arquivo ***count.txt***
 
 ```py
 def count_quantity_to_rio():
@@ -148,14 +153,14 @@ def count_quantity_to_rio():
     conn.close()
 ```
 
-5 - Adicionando uma variável no Airflow com a key my_email e adiciona um e-mail no campo value
+5 - Adicionando uma variável no Airflow com a key ***my_email*** e adiciona um e-mail no campo value
 
 ```py
 def add_my_email():
     Variable.set("my_email", "angelica.macedo@indicium.tech")
 ```
 
-6 - Função que gera um texto codificado gerado automaticamente pela task export_final_output
+6 - Função que gera um texto codificado gerado automaticamente pela task ***export_final_output***
 
 ```py
 def export_final():
@@ -180,7 +185,7 @@ default_args = {
 }
 ```
 
-#### Criando as dags:
+#### Criando o DAG:
 
 ```py
 dag = DAG('task_order_execution',
